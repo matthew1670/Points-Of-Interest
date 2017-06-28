@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Points Of Interest</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css" />
+	<link rel="stylesheet" href="css/leaflet.awesome-markers.css">
+    <link rel="stylesheet" href="css/styles.css" media="screen" title="no title">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.2/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+<div class="container-fluid full-height">
+  <div class="row">
+    <div class="col-xs-12 xs-center xs-middle" id="title">
+      <h1>Welcome to Points Of Interest</h1>
+    </div>
+  </div>
+<div class="row equal-height full-height">
+  <div class="col-xs-12 col-sm-4 col-md-2 search">
+  <p>Search by region and/or type<br/>
+  <small>You may leave Either Feild Blank</small></p>
+    <input type="text" name="region" id="Search-Region" placeholder="Region"/>
+    <select name="type" id="Search-Type">
+      <option value="">Any Type</option>
+      <option value="pub">Pub</option>
+      <option value="restaurant">Restaurant</option>
+      <option value="city">City</option>
+      <option value="town">Town</option>
+    </select>
+    <input type="button" name="submit" value="Search" id="Search-Btn">
+	<div class="col-xs-12 nopad" id="results">
+	
+	</div>
+  </div>
+<div class="col-xs-12 col-sm-8 col-md-10" id="map1">
+</div>	
+</div>
+</div>
+<div class="Dialogbox-add" id="Dialogbox-add">
+<form id="addpoiform" name="addpoiform">
+<label for="POI_name"> Name: </label>
+<input type="text" name="POI_name" id="POI_name" required/></br>
+<label for="POI_lat"> Latitude: </label>
+<input type="text" name="POI_lat" id="POI_lat" readonly /></br>
+<label for="POI_lon"> Longitude: </label>
+<input type="text" name="POI_lon" id="POI_lon" readonly /></br>
+<label for="POI_type"> Type: </label>
+<select name="POI_type" id="POI_type" required>
+      <option value="pub">Pub</option>
+      <option value="restaurant">Restaurant</option>
+      <option value="city">City</option>
+      <option value="town">Town</option>
+</select></br>
+<label for="POI_country"> Country: </label>
+<input type="text" name="POI_country" id="POI_country" required/></br>
+<label for="POI_region"> region: </label>
+<input type="text" name="POI_region" id="POI_region" required/></br>
+<label for="POI_Description"> Description</label>
+<textarea name="POI_Description" id="POI_Description" required></textarea></br>
+</form>
+</div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="js/jquery.validate.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js" integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous" ></script>
+    <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+	<script src="js/leaflet.awesome-markers.js"></script>
+    <script src="js/scripts.js" charset="utf-8"></script>
+  </body>
+</html>
