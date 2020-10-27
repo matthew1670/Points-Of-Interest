@@ -1,8 +1,10 @@
 var express = require('express');
 var app = express();
-var MongoClient = require('mongodb').MongoClient;
-var MongoUrl = 'mongodb://localhost:27017/node005';
+const MongoClient = require('mongodb').MongoClient;
+const MongoUrl = "mongodb+srv://node005:node005@cluster0.yov5l.mongodb.net/pointsofinterest?retryWrites=true&w=majority";
+const client = new MongoClient(MongoUrl, { useNewUrlParser: true });
 var qs = require("querystring");
+
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, X-Webservice-Message");
@@ -13,7 +15,7 @@ app.use(function(req, res, next) {
 app.get('/', function(req, res) {
     MongoClient.connect(MongoUrl, function(err, db) {
         if (!err) {
-            var poi = db.collection('pointsofinterest');
+            var poi = client.db("pointsofinterest").collection('pointsofinterest');
             poi.find().toArray(
 
                 function(err, results) {
@@ -24,7 +26,9 @@ app.get('/', function(req, res) {
         }
     });
 });
+
 app.get('/search', function(req, res) {
+    console.log("Test");
     var region;
     var searchType;
     //If either TYPE and REGION is set then carry on.
@@ -33,9 +37,9 @@ app.get('/search', function(req, res) {
         if (req.query.region && req.query.type) {
             region = req.query.region;
             searchType = req.query.type;
-            MongoClient.connect(MongoUrl, function(err, db) {
+client.connect(err => {
                 if (!err) {
-                    var poi = db.collection('pointsofinterest');
+                    var poi = client.db("pointsofinterest").collection('pointsofinterest');
                     poi.find({
                         "region": region,
                         "type": searchType
@@ -60,9 +64,9 @@ app.get('/search', function(req, res) {
         //If only REGION is set
         else if (req.query.region) {
             region = req.query.region;
-            MongoClient.connect(MongoUrl, function(err, db) {
+client.connect(err => {
                 if (!err) {
-                    var poi = db.collection('pointsofinterest');
+                    var poi = client.db("pointsofinterest").collection('pointsofinterest');
                     poi.find({
                         "region": region
                     }).toArray(
@@ -86,9 +90,9 @@ app.get('/search', function(req, res) {
         //If only type is set
         else if (req.query.type) {
             searchType = req.query.type;
-            MongoClient.connect(MongoUrl, function(err, db) {
+client.connect(err => {
                 if (!err) {
-                    var poi = db.collection('pointsofinterest');
+                    var poi = client.db("pointsofinterest").collection('pointsofinterest');
                     poi.find({
                         "type": searchType
                     }).toArray(
@@ -115,6 +119,7 @@ app.get('/search', function(req, res) {
     }
 });
 // ------------------------------------------------------------- ADD END POINT STARTS ------------------------------------------------
+
 app.post('/add', function(req, res) {
     var postdata = "";
     req.on("data", function(data) {
@@ -162,7 +167,7 @@ app.post('/add', function(req, res) {
 
         MongoClient.connect(MongoUrl, function(err, db) {
             if (!err) {
-                var poi = db.collection('pointsofinterest');
+                var poi = client.db("pointsofinterest").collection('pointsofinterest');
                 poi.insert({
                     "name": name,
                     "type": type,
@@ -225,16 +230,16 @@ app.post('/review', function(req, res) {
         //Checking of the id matches any on the P:oints of interest DB. 
         MongoClient.connect(MongoUrl, function(err, db) {
             if (!err) {
-                var poi = db.collection('pointsofinterest');
+                var poi = client.db("pointsofinterest").collection('pointsofinterest');
                 poi.find({
                     _id: poi_id
                 }).count({},
                     function(err, count){
                         if (!err) {
                             if (count > 0) {
-                                MongoClient.connect(MongoUrl, function(err, db) {
+                    client.connect(err => {
                                     if (!err) {
-                                        var poi = db.collection('poi_reviews');
+                                        var poi = client.db("pointsofinterest").collection('poi_reviews');
                                         poi.insert({
                                                 "poi_id": poi_id,
                                                 "review": review
@@ -271,9 +276,6 @@ app.post('/review', function(req, res) {
     });
 });
 // ------------------------------------------------------------- REVIEW END POINT END ------------------------------------------------
-
-
-
 
 app.listen(8005, function() {
     console.log('Server Running listening on port 8005!');

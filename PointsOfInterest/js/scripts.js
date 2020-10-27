@@ -1,6 +1,5 @@
 var cafeMarker, pubMarker, foodMarker, cityMarker, map, markers;
-var WebserverURL = "//193.63.200.53:8005";
-//var WebserverURL = "//192.168.0.200:8005";
+var WebserverURL = "//localhost:8005";
 $(document).ready(function() {
     //init for map
     map = L.map('map1', {
@@ -74,74 +73,74 @@ function ajaxSearch() {
     var type = $("#Search-Type").val();
     console.log("Search......for Region of " + region + " and  type of " + type);
     $.ajax({
-        method: "GET",
-        dataType: 'json',
-        url: WebserverURL + "/search",
-        data: {
-            'region': region,
-            'type': type
-        }
+    method: "GET",
+    dataType: 'json',
+    url: WebserverURL + "/search",
+    data: {
+        'region': region,
+        'type': type
+    }
     }).done(function(data, textStatus, XHR) {
-            $("#results").empty();
-			markers.clearLayers();
-            if (XHR.status == 204) {
-                $("#results").append("<p>NO RESULTS FOUND</p>");
-                return;
+        $("#results").empty();
+        markers.clearLayers();
+        if (XHR.status == 204) {
+            $("#results").append("<p>NO RESULTS FOUND</p>");
+            return;
+        }
+        if (data.length > 0) {
+            for (var i = 0; i < data.length; i++) {
+                $("#results").append("<p class='POI' id='" + data[i]["_id"] + "'>" +
+                    data[i].name + " - " + data[i].type + "<br/>" +
+                    data[i].country + " - [ Lat " + data[i].lat + " / Lon " + data[i].lon + " ]" +
+                    "</p>");
+                //What Marker to use	
+                var markertype;					
+                switch (data[i].type) {
+                    case "restaurant":
+                            markertype = foodMarker;
+                        break;
+                    case "pub":
+                            markertype = pubMarker;
+                        break;
+                    case "city":
+                        markertype = cityMarker;
+                        break;
+                    case "town":
+                        markertype = cityMarker;
+                        break;
+                    case "cafe":
+                        markertype = cafeMarker;
+                        break;
+                    default:
+                        markertype = Marker; 
             }
-            if (data.length > 0) {
-                for (var i = 0; i < data.length; i++) {
-                    $("#results").append("<p class='POI' id='" + data[i]["_id"] + "'>" +
-                        data[i].name + " - " + data[i].type + "<br/>" +
-                        data[i].country + " - [ Lat " + data[i].lat + " / Lon " + data[i].lon + " ]" +
-                        "</p>");
-                    //What Marker to use	
-					var markertype;					
-                    switch (data[i].type) {
-                        case "restaurant":
-								markertype = foodMarker;
-                            break;
-                        case "pub":
-								markertype = pubMarker;
-                            break;
-                        case "city":
-                          markertype = cityMarker;
-                            break;
-						case "town":
-                          markertype = cityMarker;
-                            break;
-                        case "cafe":
-                           markertype = cafeMarker;
-                            break;
-                        default:
-                           markertype = Marker; 
-				}
-					var marker = L.marker([data[i].lat, data[i].lon], {icon: markertype}).bindPopup(data[i].name);
-					markers.addLayer(marker);
-			}};
-			$("#results > p").on("click", [this], viewDetails);
-            }).fail(function(XHR, textStatus, err) {
-            if (XHR.status == 503) {
-                $("#results").html("<p>Sorry There Was a Server Error</p>");
-            } else if (XHR.status == 400) {
-                $("#results").html("<p>You Need to enter at least a Region or Select a Type</p>");
-            }
-        });
-    };
+                var marker = L.marker([data[i].lat, data[i].lon], {icon: markertype}).bindPopup(data[i].name);
+                markers.addLayer(marker);
+        }};
+        $("#results > p").on("click", [this], viewDetails);
+        }).fail(function(XHR, textStatus, err) {
+        if (XHR.status == 503) {
+            $("#results").html("<p>Sorry There Was a Server Error</p>");
+        } else if (XHR.status == 400) {
+            $("#results").html("<p>You Need to enter at least a Region or Select a Type</p>");
+        }
+    });
+};
 
 
-    function mapClick(e) {
-        var lat = e.latlng.lat;
-        var lon = e.latlng.lng;
-		$("#POI_lat").val(lat);
-		$("#POI_lon").val(lon);
-		$("#Dialogbox-add").dialog("open");
-		
-    }
+function mapClick(e) {
+    var lat = e.latlng.lat;
+    var lon = e.latlng.lng;
+    $("#POI_lat").val(lat);
+    $("#POI_lon").val(lon);
+    $("#Dialogbox-add").dialog("open");
+    
+}
 
 
-    function viewDetails(e) {
-        console.log("The Link for the id of " + e.target.id + " Has Been Clicked");
-    }
+function viewDetails(e) {
+    console.log("The Link for the id of " + e.target.id + " Has Been Clicked");
+}
 	
 function addpoi(){
 	var name = $("#POI_name").val();

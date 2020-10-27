@@ -32,7 +32,7 @@
 </div>
 <div class="row">
   <div class="col-xs-12">
-    <p>What Type of POI do you want to view ?
+    <p>What Type of POI do you want to view ?</p>
 <form class="" action="index.php" method="post">
   <select name="type" id="Search-Type">
     <option value="">Any Type</option>
@@ -43,14 +43,13 @@
   </select>
 <button type="submit" name="button" id="searchPOI">Search</button>
 </form>
-</p>
   </div>
 </div>
 <div class="row equal-height" id="results">
 <!-- CURL request to show hampshire POI's depending on users selected info -->
 <!-- if Any type is sellected and when on load all POI's are shown regardless of type -->
 <?php
-if ($_POST["type"]){
+if ($_POST && $_POST["type"]){
   $type = $_POST["type"];
     echo "<div class='col-xs-12'><p>Currently Showing All Hampshire $type's</p></div>";
 }else{
@@ -60,7 +59,7 @@ if ($_POST["type"]){
   // Initialise the cURL connection
   $connection = curl_init();
   // Specify the URL to connect to
-  curl_setopt($connection, CURLOPT_URL, "193.63.200.53:8005/search?region=Hampshire&type=$type");
+  curl_setopt($connection, CURLOPT_URL, "localhost:8005/search?region=Hampshire&type=$type");
   // This option ensures that the HTTP response is *returned* from curl_exec(),
   // (see below) rather than being output to screen.
   curl_setopt($connection,CURLOPT_RETURNTRANSFER,1);
@@ -104,7 +103,7 @@ else if ($httpCode == 400){
 <div id="dialog-form" title="Add a Review">
 <p class="validateTips">All form fields are required.</p>
 <form id="addreviewform" action="addreview.php" method="POST">
-  <input type="text" name="id" id="id" readonly>
+  <input type="text" name="id" id="id" readonly disabled>
   <label for="review">review</label>
   <textarea name="review" rows="8" cols="10" id="review"></textarea>
 </form>
