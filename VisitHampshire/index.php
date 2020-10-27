@@ -103,7 +103,7 @@ else if ($httpCode == 400){
 <div id="dialog-form" title="Add a Review">
 <p class="validateTips">All form fields are required.</p>
 <form id="addreviewform" action="addreview.php" method="POST">
-  <input type="text" name="id" id="id" readonly disabled>
+  <input type="text" name="id" id="id" readonly>
   <label for="review">review</label>
   <textarea name="review" rows="8" cols="10" id="review"></textarea>
 </form>

@@ -1,8 +1,8 @@
 var express = require('express');
 var app = express();
 const MongoClient = require('mongodb').MongoClient;
-const MongoUrl = "mongodb+srv://node005:node005@cluster0.yov5l.mongodb.net/pointsofinterest?retryWrites=true&w=majority";
-const client = new MongoClient(MongoUrl, { useNewUrlParser: true });
+const MongoUrl = "mongodb+srv://node005:node005@cluster0.yov5l.mongodb.net/pointsofinterest";
+const client = new MongoClient(MongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
 var qs = require("querystring");
 
 app.use(function(req, res, next) {
@@ -13,11 +13,10 @@ app.use(function(req, res, next) {
 });
 
 app.get('/', function(req, res) {
-    MongoClient.connect(MongoUrl, function(err, db) {
+    client.connect(MongoUrl, function(err, db) {
         if (!err) {
-            var poi = client.db("pointsofinterest").collection('pointsofinterest');
+            const poi = client.db("pointsofinterest").collection('pointsofinterest');
             poi.find().toArray(
-
                 function(err, results) {
                     res.json(results);
                 });
@@ -28,28 +27,26 @@ app.get('/', function(req, res) {
 });
 
 app.get('/search', function(req, res) {
-    console.log("Test");
-    var region;
-    var searchType;
+    let region;
+    let searchType;
     //If either TYPE and REGION is set then carry on.
     if (req.query.region || req.query.type) {
         //If both TYPE and REGION is set
         if (req.query.region && req.query.type) {
             region = req.query.region;
             searchType = req.query.type;
-client.connect(err => {
+            client.connect(err => {
                 if (!err) {
-                    var poi = client.db("pointsofinterest").collection('pointsofinterest');
+                    const poi = client.db("pointsofinterest").collection('pointsofinterest');
                     poi.find({
                         "region": region,
                         "type": searchType
                     }).toArray(
-
                         function(err, results) {
                             if (results.length > 0) {
                                 res.json(results);
                             } else {
-                                //  res.header("X-Webservice-Message", "No Data Returned");
+                                res.header("X-Webservice-Message", "No Data Returned");
                                 res.status(204);
                                 res.end();
                             }
@@ -62,15 +59,14 @@ client.connect(err => {
             });
         }
         //If only REGION is set
-        else if (req.query.region) {
+        else if (req.query && req.query.region) {
             region = req.query.region;
-client.connect(err => {
+            client.connect(err => {
                 if (!err) {
-                    var poi = client.db("pointsofinterest").collection('pointsofinterest');
+                    const poi = client.db("pointsofinterest").collection('pointsofinterest');
                     poi.find({
                         "region": region
                     }).toArray(
-
                         function(err, results) {
                             if (results.length > 0) {
                                 res.json(results);
@@ -90,13 +86,12 @@ client.connect(err => {
         //If only type is set
         else if (req.query.type) {
             searchType = req.query.type;
-client.connect(err => {
+            client.connect(err => {
                 if (!err) {
-                    var poi = client.db("pointsofinterest").collection('pointsofinterest');
+                    const poi = client.db("pointsofinterest").collection('pointsofinterest');
                     poi.find({
                         "type": searchType
                     }).toArray(
-
                         function(err, results) {
                             if (results.length > 0) {
                                 res.json(results);
@@ -121,7 +116,7 @@ client.connect(err => {
 // ------------------------------------------------------------- ADD END POINT STARTS ------------------------------------------------
 
 app.post('/add', function(req, res) {
-    var postdata = "";
+    let postdata = "";
     req.on("data", function(data) {
         postdata += data;
     });
@@ -133,7 +128,7 @@ app.post('/add', function(req, res) {
             res.end();
         }
         //Setting Variables from Post Data
-        var post = qs.parse(postdata);
+        const post = qs.parse(postdata);
         //Check if variables are set
         var varcheck = ["name", "type", "country", "region", "lon", "lat", "desc"];
         for (var i = 0; i < varcheck.length; i++) {
@@ -144,31 +139,31 @@ app.post('/add', function(req, res) {
                 res.end();
             }
         }
-        var name = post.name;
-        var type = post.type;
-        var country = post.country;
-        var region = post.region;
-        var lon = parseFloat(post.lon);
-        var lat = parseFloat(post.lat);
-        var desc = post.desc;
+        const name = post.name;
+        const type = post.type;
+        const country = post.country;
+        const region = post.region;
+        const lon = parseFloat(post.lon);
+        const lat = parseFloat(post.lat);
+        const desc = post.desc;
         //Checking Lat and Lon
         //lon check
         if (parseFloat("-180") >= lon || parseFloat("180") <= lon) {
-            //res.header("X-Webservice-Message", "Longitude is invalid");
+            res.header("X-Webservice-Message", "Longitude is invalid");
             res.status(400);
             res.end();
         }
         //lat check
         if (parseFloat("-90") >= lat || parseFloat("90") <= lat) {
-            //  res.header("X-Webservice-Message", "Latitude is invalid");
+            res.header("X-Webservice-Message", "Latitude is invalid");
             res.status(400);
             res.end();
         }
 
-        MongoClient.connect(MongoUrl, function(err, db) {
+        client.connect(MongoUrl, function(err, db) {
             if (!err) {
-                var poi = client.db("pointsofinterest").collection('pointsofinterest');
-                poi.insert({
+                const poi = client.db("pointsofinterest").collection('pointsofinterest');
+                poi.insertOne({
                     "name": name,
                     "type": type,
                     "country": country,
@@ -178,7 +173,7 @@ app.post('/add', function(req, res) {
                     "description": desc
                 }, function(err, db) { //CallBack Function for Add to DB
                     if (!err) {
-                        //  res.header("X-Webservice-Message", "Added Database Entrie");
+                        res.header("X-Webservice-Message", "Added Database Entrie");
                         res.status(201);
                         res.end();
                         //IF ERROR IN ADDING TO DB
@@ -225,22 +220,22 @@ app.post('/review', function(req, res) {
             }
         }
 
-        var poi_id = post.id;
-        var review = post.review;
+        const poi_id = post.id;
+        const review = post.review;
         //Checking of the id matches any on the P:oints of interest DB. 
-        MongoClient.connect(MongoUrl, function(err, db) {
+        client.connect(MongoUrl, function(err, db) {
             if (!err) {
-                var poi = client.db("pointsofinterest").collection('pointsofinterest');
+                const poi = client.db("pointsofinterest").collection('pointsofinterest');
                 poi.find({
                     _id: poi_id
                 }).count({},
                     function(err, count){
                         if (!err) {
                             if (count > 0) {
-                    client.connect(err => {
+                                client.connect(err => {
                                     if (!err) {
-                                        var poi = client.db("pointsofinterest").collection('poi_reviews');
-                                        poi.insert({
+                                        const poi = client.db("pointsofinterest").collection('poi_reviews');
+                                        poi.insertOne({
                                                 "poi_id": poi_id,
                                                 "review": review
                                             },

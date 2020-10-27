@@ -1,4 +1,4 @@
-var webserverURL = "//193.63.200.53:8005";
+var webserverURL = "//localhost:8005";
 //var webserverURL = "//192.168.0.200:8005";
 $("Document").ready(function(){
 	//INIT FOR SITE JS

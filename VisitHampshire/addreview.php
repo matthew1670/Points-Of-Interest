@@ -34,7 +34,7 @@
 <div class="col-xs-12">
 <?php 
 	$connection = curl_init();
- curl_setopt($connection, CURLOPT_URL, "193.63.200.53:8005/review");
+ curl_setopt($connection, CURLOPT_URL, "localhost:8005/review");
   // This option ensures that the HTTP response is *returned* from curl_exec(),
   // (see below) rather than being output to screen.
   curl_setopt($connection,CURLOPT_RETURNTRANSFER,1);
