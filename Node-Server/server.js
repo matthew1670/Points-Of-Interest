@@ -1,9 +1,9 @@
-var express = require('express');
-var app = express();
+const express = require('express');
+const app = express();
 const MongoClient = require('mongodb').MongoClient;
 const MongoUrl = "mongodb+srv://node005:node005@cluster0.yov5l.mongodb.net/pointsofinterest";
 const client = new MongoClient(MongoUrl, { useNewUrlParser: true, useUnifiedTopology: true });
-var qs = require("querystring");
+const qs = require("querystring");
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
